@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <h3>Regular Form</h3>
+    <pre class="prettyprint linenums languague-python">
+</pre>
+    <p>Below is a simple example form generated with Yota. The form is re-rendered on submission via <code>Form.render_validate()</code> to provide automatic injection of validation errors into the templating context. This injection is provided via a callback method in the <code>Node</code> class that can easily be overridden if a different semantic is preferred.</p>
+    {{ form|safe }}
+  </div>
+</div>
+{% endblock %}

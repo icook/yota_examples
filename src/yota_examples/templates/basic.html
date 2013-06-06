@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <h3>Dynamic Form</h3>
+    <pre class="prettyprint linenums languague-python">
+</pre>
+    <p>Yota's internal Node and Validation management systems allow for the
+    addition of components in a dynamic nature. For instance, if you'd like to
+    allow the user to add an arbitrary number of dependents to a Form with
+    JavaScript and then validate these Node's on submission this functionality
+    is all supported with Yota.</p>
+    {{ form|safe }}
+  </div>
+</div>
+{% endblock %}

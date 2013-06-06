@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <h3>On-Submit Form</h3>
+    <pre class="prettyprint linenums languague-python">
+</pre>
+    <p>An example of an On-Submit form!</p>
+    {{ submit_form|safe }}
+  </div>
+
+  <div class="row">
+    <h3>Piecewise Form</h3>
+        <pre class="prettyprint linenums languague-python">
+    </pre>
+    <p>An example of an piecewise form!</p>
+    {{ piecewise_form|safe }}
+  </div>
+</div>
+{% endblock %}
