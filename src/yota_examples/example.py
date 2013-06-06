@@ -2,11 +2,16 @@ from yota import Form
 from yota.nodes import *
 import yota
 from yota.validators import Check, MinLengthValidator, RequiredValidator
+from yota.renderers import JinjaRenderer
 import os
 import vals
 from flask import Flask, request
 from flask import render_template, send_from_directory
 app = Flask(__name__)
+
+# Patch out jinjarenderer to include templates that are local
+JinjaRenderer.search_path.append(os.path.dirname(os.path.realpath(__file__)) +
+"/templates/yota/")
 
 """ Setup a custom static route to grab the JavaScript library from Yota.
 Somewhat hackey, but it works. """
@@ -46,6 +51,9 @@ def basic():
 
 """ ================================================================================= """
 class DynamicForm(Form):
+    class AddNodeDynamic(Node):
+        template = "dynamic_add"
+
     @classmethod
     def get_form_from_data(cls, data):
         args = []
@@ -55,7 +63,7 @@ class DynamicForm(Form):
         return cls.get_form(*args)
 
     @classmethod
-    def get_form(cls, name, mode=0, count=1):
+    def get_form(cls, name, count=1):
         # Make a list of nodes to add into the Form nodelist
         append_list = []
         for i in xrange(int(count)):
@@ -70,20 +78,17 @@ class DynamicForm(Form):
                         g_context=g_context,
                         hidden={'name': name,
                                 'count': count})
-        form.insert_after('address', append_list)
+        form.insert_after('title', append_list)
         return form
 
-    first = EntryNode(title="First Name", validators=MinLengthValidator(5))
-    last = EntryNode(title="Last Name")
-    _last_valid = Check(MinLengthValidator(5), 'last')
-    address = EntryNode(validators=RequiredValidator())
-    state = ListNode(items=vals.states)
+    title = EntryNode(title="List Title", validators=MinLengthValidator(5))
+    add_row = AddNodeDynamic()
     submit = SubmitNode(title="Submit")
 
 @app.route("/dynamic", methods=['GET', 'POST'])
 def dynamic():
     # Generate a regular form via a classmethod to provide easy access to extra functionality
-    form_out = DynamicForm()
+    form_out = DynamicForm.get_form('dynamic')
     # Handle regular submission of the form
     if request.method == 'POST':
         form_out = form_out.validate_render(request.form)

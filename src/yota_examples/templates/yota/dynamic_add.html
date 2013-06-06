@@ -1,0 +1,23 @@
+{% extends "horiz.html" %}
+{% block label %}{% endblock %}
+{% block control %}
+<input type="button" id="{{ id }}" name="{{ name }}" value="{{ title }}" placeholder="{{ placeholder }}">
+<script language="javascript">
+$(function () {
+    $('#{{ id }}').click(function () {
+        var count = $('#dynamic').children('[name=_arg_count]').val();
+        $('#dynamic').children('[name=_arg_count]').val(parseInt(count) + 1);
+        var item = $('#dynamic_item' + (count-1)).parent().parent().clone();
+        var label = item.children("[for=item" + (count-1) + "]");
+        var error_div = item.children("#dynamic_item" + (count-1) + "_error");
+        var input = item.find("input");
+        error_div.attr('id', "dyanmic_item" + count + "_error");
+        label.attr('for', 'item' + count);
+        label.html('Item ' + count);
+        input.attr('id', 'dynamic_item' + count);
+        input.attr('name', 'item' + count);
+        $('#dynamic_add_row').parentsUntil(".control-group").before(item);
+    });
+});
+</script>
+{% endblock %}
