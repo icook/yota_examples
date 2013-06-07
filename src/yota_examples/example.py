@@ -65,8 +65,8 @@ class DynamicForm(Form):
         # Make a list of nodes to add into the Form nodelist
         append_list = []
         form = DynamicForm(g_context={'ajax': True},
-                        hidden={'count': count,
-                                'dynamic': True})
+                           name='dynamic',
+                           hidden={'count': count, 'dynamic': True})
         for i in xrange(int(count)):
             append_list.append(
                 EntryNode(title="Item {}".format(i), _attr_name='item{}'.format(i)))

@@ -17,7 +17,7 @@ $(function () {
         input.attr('id', 'dynamic_item' + count);
         input.val('');
         input.attr('name', 'item' + count);
-        $('#dynamic_add_row').parentsUntil(".control-group").before(item);
+        $('#{{ id }}').parentsUntil(".control-group").before(item);
     });
 });
 </script>
