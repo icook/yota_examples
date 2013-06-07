@@ -19,86 +19,6 @@ Somewhat hackey, but it works. """
 def custom_static(filename):
     return send_from_directory(os.path.dirname(yota.__file__), filename)
 
-@app.route("/", methods=['GET', 'POST'])
-def home():
-    return render_template('index.html')
-
-""" ================================================================================= """
-class BasicForm(Form):
-    # Override the default title which would be "First" to "First Name"
-    first = EntryNode(title="First Name")
-    # And add a validator to it explicitly. The name of the attribute is not important
-    _last_valid = Check(MinLengthValidator(5), 'first')
-    # Like above, but now add a simple shorthand for a min length validator
-    last = EntryNode(title="Last Name", validators=MinLengthValidator(5))
-    # Now add a different type of validator. Simply requires your submission to not be nothing
-    address = EntryNode(validators=RequiredValidator())
-    state = ListNode(items=vals.states)
-    submit = SubmitNode(title="Submit")
-
-@app.route("/basic", methods=['GET', 'POST'])
-def basic():
-    # Generate a regular form via a classmethod to provide easy access to extra functionality
-    form = BasicForm()
-    # Handle regular submission of the form
-    if request.method == 'POST':
-        form_out = form.validate_render(request.form)
-    else:
-        form_out = form.render()
-
-    # Generate our ajax form
-    return render_template('basic.html', form=form.render())
-
-""" ================================================================================= """
-class DynamicForm(Form):
-    class AddNodeDynamic(Node):
-        template = "dynamic_add"
-
-    @classmethod
-    def get_form_from_data(cls, data):
-        args = []
-        for key, val in data.iteritems():
-            if key.startswith('_arg_'):
-                args.append(val)
-        return cls.get_form(*args)
-
-    @classmethod
-    def get_form(cls, name, count=1):
-        # Make a list of nodes to add into the Form nodelist
-        append_list = []
-        for i in xrange(int(count)):
-            append_list.append(
-                EntryNode(title="Item {}".format(i), _attr_name='item{}'.format(i)))
-
-        # Populate our global context depending on values
-        g_context = {'ajax': True}
-
-        form = DynamicForm(name=name,
-                        id=name,
-                        g_context=g_context,
-                        hidden={'name': name,
-                                'count': count})
-        form.insert_after('title', append_list)
-        return form
-
-    title = EntryNode(title="List Title", validators=MinLengthValidator(5))
-    add_row = AddNodeDynamic()
-    submit = SubmitNode(title="Submit")
-
-@app.route("/dynamic", methods=['GET', 'POST'])
-def dynamic():
-    # Generate a regular form via a classmethod to provide easy access to extra functionality
-    form_out = DynamicForm.get_form('dynamic')
-    # Handle regular submission of the form
-    if request.method == 'POST':
-        form_out = form_out.validate_render(request.form)
-    else:
-        form_out = form_out.render()
-
-    # Generate our form
-    return render_template('dynamic.html', form=form_out)
-
-""" ================================================================================= """
 class JsonForm(Form):
     @classmethod
     def get_form(cls, name, mode=0):
@@ -128,21 +48,84 @@ class JsonForm(Form):
             vdict['message'] = 'Please enter a valid value.'
         return vdict
 
-@app.route("/json", methods=['GET', 'POST'])
-def json():
+class DynamicForm(Form):
+    class AddNodeDynamic(Node):
+        template = "dynamic_add"
+
+    @classmethod
+    def get_form_from_data(cls, data):
+        kwargs = {}
+        for key, val in data.iteritems():
+            if key.startswith('_arg_'):
+                kwargs[key[5:]] = val
+        return cls.get_form(*args)
+
+    @classmethod
+    def get_form(cls, count=1, **args):
+        # Make a list of nodes to add into the Form nodelist
+        append_list = []
+        form = DynamicForm(g_context={'ajax': True},
+                        hidden={'name': name,
+                                'count': count,
+                                'dynamic': True})
+        for i in xrange(int(count)):
+            append_list.append(
+                EntryNode(title="Item {}".format(i), _attr_name='item{}'.format(i)))
+            form._validation_list.append(Check(MinLengthValidator(5), 'item{}'.format(i)))
+
+        form.insert_after('title', append_list)
+        return form
+
+    title = EntryNode(title="List Title", validators=MinLengthValidator(5))
+    add_row = AddNodeDynamic()
+    submit = SubmitNode(title="Submit")
+
+class BasicForm(Form):
+    # Override the default title which would be "First" to "First Name"
+    first = EntryNode(title="First Name")
+    # And add a validator to it explicitly. The name of the attribute is not important
+    _last_valid = Check(MinLengthValidator(5), 'first')
+    # Like above, but now add a simple shorthand for a min length validator
+    last = EntryNode(title="Last Name", validators=MinLengthValidator(5))
+    # Now add a different type of validator. Simply requires your submission to not be nothing
+    address = EntryNode(validators=RequiredValidator())
+    state = ListNode(items=vals.states)
+    submit = SubmitNode(title="Submit")
+
+@app.route("/", methods=['GET', 'POST'])
+def home():
+    """ The block of logic below is unfortunately somewhat confusing, but most
+    of its clutter comes from the fact that we have four forms on the same page,
+    and all of them have slightly different way in which they need to be
+    invoked. """
+
     # Generate a regular form via a classmethod to provide easy access to extra functionality
+    basic_form = BasicForm()
     submit_form = JsonForm.get_form('regular')
     piecewise_form = JsonForm.get_form('ajax', mode=1)
 
     # Handle regular submission of the form
-    if request.method == 'POST' and '_piecewise_' in request.form:
-        return piecewise_form.json_validate(request.form, piecewise=True)
-    elif '_ajax_' in request.form:
-        return submit_form.json_validate(request.form)
+    if request.method == 'POST':
+        if '_arg_dynamic' in request.form:
+            form_out = DynamicForm.get_form_from_data(request.form)
+            return form_out.json_validate(request.form)
+        elif '_piecewise_' in request.form:
+            return piecewise_form.json_validate(request.form, piecewise=True)
+        elif '_ajax_' in request.form:
+            return submit_form.json_validate(request.form)
+        else:
+            basic_form_out = basic_form.validate_render(request.form)
+    else:
+        basic_form_out = basic_form.render()
 
-    # just return the regular render of our page
-    return render_template('json.html', submit_form=submit_form.render(), piecewise_form=piecewise_form.render())
+    # Generate a regular form via a classmethod to provide easy access to extra functionality
+    dynamic_form = DynamicForm.get_form('dynamic')
 
+    return render_template('index.html',
+                            basic_form=basic_form_out,
+                            dynamic_form=dynamic_form.render(),
+                            piecewise_form=piecewise_form.render(),
+                            submit_form=submit_form.render())
 
 if __name__ == "__main__":
     app.debug = True

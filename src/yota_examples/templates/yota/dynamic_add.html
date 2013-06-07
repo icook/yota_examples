@@ -15,6 +15,7 @@ $(function () {
         label.attr('for', 'item' + count);
         label.html('Item ' + count);
         input.attr('id', 'dynamic_item' + count);
+        input.val('');
         input.attr('name', 'item' + count);
         $('#dynamic_add_row').parentsUntil(".control-group").before(item);
     });
