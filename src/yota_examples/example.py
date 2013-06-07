@@ -58,15 +58,14 @@ class DynamicForm(Form):
         for key, val in data.iteritems():
             if key.startswith('_arg_'):
                 kwargs[key[5:]] = val
-        return cls.get_form(*args)
+        return cls.get_form(**kwargs)
 
     @classmethod
-    def get_form(cls, count=1, **args):
+    def get_form(cls, count=1, **kwargs):
         # Make a list of nodes to add into the Form nodelist
         append_list = []
         form = DynamicForm(g_context={'ajax': True},
-                        hidden={'name': name,
-                                'count': count,
+                        hidden={'count': count,
                                 'dynamic': True})
         for i in xrange(int(count)):
             append_list.append(
@@ -119,7 +118,7 @@ def home():
         basic_form_out = basic_form.render()
 
     # Generate a regular form via a classmethod to provide easy access to extra functionality
-    dynamic_form = DynamicForm.get_form('dynamic')
+    dynamic_form = DynamicForm.get_form()
 
     return render_template('index.html',
                             basic_form=basic_form_out,
