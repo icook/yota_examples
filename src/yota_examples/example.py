@@ -69,8 +69,8 @@ class DynamicForm(Form):
                            hidden={'count': count, 'dynamic': True})
         for i in xrange(int(count)):
             append_list.append(
-                EntryNode(title="Item {}".format(i), _attr_name='item{}'.format(i)))
-            form._validation_list.append(Check(MinLengthValidator(5), 'item{}'.format(i)))
+                EntryNode(title="Item {0}".format(i), _attr_name='item{0}'.format(i)))
+            form._validation_list.append(Check(MinLengthValidator(5), 'item{0}'.format(i)))
 
         form.insert_after('title', append_list)
         return form
@@ -128,4 +128,4 @@ def home():
 
 if __name__ == "__main__":
     app.debug = True
-    app.run()
+    app.run(host='0.0.0.0')
