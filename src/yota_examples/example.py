@@ -1,16 +1,17 @@
 from yota import Form
 from yota.nodes import *
 import yota
-from yota.validators import Check, MinLengthValidator, RequiredValidator
+from yota.validators import *
 from yota.renderers import JinjaRenderer
 import os
 import vals
 from flask import Flask, request
 from flask import render_template, send_from_directory
+import piecewise
 app = Flask(__name__)
 
 # Patch out jinjarenderer to include templates that are local
-JinjaRenderer.search_path.append(os.path.dirname(os.path.realpath(__file__)) +
+JinjaRenderer.search_path.insert(0, os.path.dirname(os.path.realpath(__file__)) +
 "/templates/yota/")
 
 """ Setup a custom static route to grab the JavaScript library from Yota.
@@ -125,6 +126,60 @@ def home():
                             dynamic_form=dynamic_form.render(),
                             piecewise_form=piecewise_form.render(),
                             submit_form=submit_form.render())
+
+
+
+class JsonForm2(Form):
+    # must be in place to tell our form we're doing piecewise. Activates
+    # certain things in the rendering proccess
+    g_context = {'piecewise': True, 'ajax': True}
+
+    # Set a simple title for the form
+    title = 'User signup <small>(not really)</small>'
+
+    first = EntryNode(title="First Name", validators=MaxLengthValidator(32))
+    last = EntryNode(title="Last Name", validators=MaxLengthValidator(32))
+    password = PasswordNode(title='Password*',
+                            validators=MinMaxValidator(5,32))
+    password_confim = PasswordNode(title='Password Confirm*',
+                                   validators=MinMaxValidator(5,32))
+    _passwords_match = Check(MatchingValidator(),
+                             'password',
+                             'password_confirm')
+    email = EntryNode(validators=EmailValidator(), title='Email*')
+    address = EntryNode(validators=RequiredValidator())
+    state = ListNode(items=vals.states)
+    zip = EntryNode(validators=[IntegerValidator(),
+                               MinMaxValidator(5, 5)])
+    terms = CheckGroupNode(
+        boxes=[('news', 'Recieve our newsletter?'),
+               ('dont_agree', 'Something else you don\'t want to check?'),
+               ('agree', '<b>Agree to our terms of service?*</b>')])
+
+    submit = SubmitNode(title="Submit")
+
+    def process_validation(self, vdict):
+        if 'message' not in vdict:
+            vdict['message'] = 'Please enter a valid value.'
+        return vdict
+
+
+@app.route("/piecewise", methods=['GET', 'POST'])
+def piecewise():
+    # Generate a regular form via a classmethod to provide easy access to extra
+    # functionality
+    form = JsonForm2()
+
+    # Handle regular submission of the form
+    if request.method == 'POST':
+        return form.json_validate(request.form, piecewise=True)
+    else:
+        out = form.render()
+
+    return render_template('piecewise.html',
+                            form=out)
+
+
 
 if __name__ == "__main__":
     app.debug = True
