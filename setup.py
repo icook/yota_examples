@@ -5,7 +5,8 @@ here = os.path.abspath(os.path.dirname(__file__))
 
 requires = ['yota',
         'jinja2',
-        'flask'
+        'flask',
+        'django'
 ]
 
 setup(name='yota_examples',

@@ -36,6 +36,10 @@ class JsonForm(Form):
                 hidden={'name': name})
         return f
 
+    def success_header_generate(self):
+        return {'message': ("All validation completed successfully. Normally "
+                           "something would happen now...")}
+
     first = EntryNode(title="First Name", validators=MinLengthValidator(5))
     last = EntryNode(title="Last Name")
     _last_valid = Check(MinLengthValidator(5), 'last')
