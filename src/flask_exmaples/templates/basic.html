@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+{{ form|safe }}
+    <h3>Our view function</h3>
+    <pre class="prettyprint linenums languague-python">@app.route("/basic", methods=['GET', 'POST'])
+def basic():
+    # Create an instance of our Form class
+    form = BasicForm()
+
+    # Handle submission of the form
+    if request.method == 'POST':
+        # Run our convenience method designed for regular forms
+        # success is boolean if validation passed, out is the re-rendering of
+        # the form
+        success, out = form.validate_render(request.form)
+        # This is where actions should be taken on the form
+        if success:
+            print "Whoo! We should do some sort of database stuff here..."
+    else:
+        # By default we just render an empty form
+        out = form.render()
+
+    def success_header_generate(self):
+        return {'message': 'Thanks for your submission!'}
+
+    return render_template('basic.html',
+                            form=out)</pre>
+    <h3>The form definition</h3>
+    <pre class="prettyprint linenums languague-python">class BasicForm(Form):
+    # Triggers a simple h2 header
+    title = "Basic Form"
+
+    # Override the default title which would be "First" to "First Name"
+    first = EntryNode(title="First Name")
+    # And add a validator to it explicitly. The name of the attribute is not important
+    _last_valid = Check(MinLengthValidator(5), 'first')
+    # Like above, but now add a simple shorthand for a min length validator
+    last = EntryNode(title="Last Name", validators=MinLengthValidator(5))
+    # Now add a different type of validator. Simply requires your submission to not be nothing
+    address = EntryNode(validators=RequiredValidator())
+    # Make a dropdown that lists all the states. Pull in the data from another
+    # file for cleanlyness
+    state = ListNode(items=vals.states)
+    submit = SubmitNode(title="Submit")
+
+    def success_header_generate(self):
+        self.start.add_error({'message': 'Thanks for your submission!'})</pre>
+</div>
+</div>
+{% endblock %}

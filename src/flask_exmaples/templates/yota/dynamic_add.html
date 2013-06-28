@@ -5,16 +5,16 @@
 <script language="javascript">
 $(function () {
     $('#{{ id }}').click(function () {
-        var count = $('#dynamic').children('[name=_arg_count]').val();
-        $('#dynamic').children('[name=_arg_count]').val(parseInt(count) + 1);
-        var item = $('#dynamic_item' + (count-1)).parent().parent().clone();
+        var count = $('#{{ g.form_id }}').children('[name=_arg_count]').val();
+        $('#{{ g.form_id }}').children('[name=_arg_count]').val(parseInt(count) + 1);
+        var item = $('#{{ g.form_id }}_item' + (count-1)).parent().parent().clone();
         var label = item.children("[for=item" + (count-1) + "]");
-        var error_div = item.children("#dynamic_item" + (count-1) + "_error");
+        var error_div = item.children("#{{ g.form_id }}_item" + (count-1) + "_error");
         var input = item.find("input");
-        error_div.attr('id', "dyanmic_item" + count + "_error");
+        error_div.attr('id', "{{ g.form_id }}_item" + count + "_error");
         label.attr('for', 'item' + count);
         label.html('Item ' + count);
-        input.attr('id', 'dynamic_item' + count);
+        input.attr('id', '{{ g.form_id }}_item' + count);
         input.val('');
         input.attr('name', 'item' + count);
         $('#{{ id }}').parentsUntil(".control-group").before(item);
