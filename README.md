@@ -1,7 +1,7 @@
-[yota](http://github.com/icook/yota) examples
+[Yota](http://github.com/icook/yota) Examples
 =============================================
 
-Examples for the Yota form library. A simple demonstration using Flask, showcasing several of the key features of Yota.
+Examples for the Yota form library. A simple demonstration using Flask and Django, showcasing several of the key features of Yota.
 
 Installation
 ==============
