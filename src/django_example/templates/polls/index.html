@@ -1,0 +1,20 @@
+{% extends "polls/base.html" %}
+
+{% block content %}
+<h1>Welcome to Yota's Polls Example</h1>
+{% if latest_poll_list %}
+    <ul>
+    {% for poll in latest_poll_list %}
+    <li>
+      <a href="{% url "django_example.views.detail" poll_id=poll.id %}">{{ poll.question }}</a>
+       -- 
+      <small><a href="{% url "django_example.views.add_choice" poll.id %}">[Add
+              a new Choice]</a></small>
+    </li>
+    {% endfor %}
+    </ul>
+{% else %}
+<p>No polls are available. Would you like to <a href="{% url "django_example.views.add_poll" %}">add</a> one now?</p>
+{% endif %}
+<a href="{% url "django_example.views.add_poll" %}">Add a new Poll</a>
+{% endblock %}

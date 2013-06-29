@@ -1,0 +1,38 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Yota Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="{% static "django_example/css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+  <link href="{% static "django_example/css/bootstrap-responsive.js" %}" rel="stylesheet" media="screen">
+</head>
+<body>
+
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="/static/css/bootstrap-responsive.css"></script>
+<script src="http://malsup.github.com/jquery.form.js"></script> 
+<script src=""></script> 
+
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="/">Yota</a>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+            <li><a href="/add_poll">Add a poll</a></li>
+            <li><a href="/add_choice">Add a choice</a></li>
+            <li><a href="/">View Polls</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </div>
+</div>
+<br /><br /><br />
+<div class="container">
+{% block content %}
+{% endblock %}
+</div>
+</body>
+</html>
