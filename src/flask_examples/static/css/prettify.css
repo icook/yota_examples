@@ -1,16 +1,18 @@
-.com { color: #93a1a1; }
+.com { color: #C7C86F; }
 .lit { color: #195f91; }
 .pun, .opn, .clo { color: #93a1a1; }
 .fun { color: #dc322f; }
-.str, .atv { color: #D14; }
-.kwd, .prettyprint .tag { color: #1e347b; }
-.typ, .atn, .dec, .var { color: teal; }
-.pln { color: #48484c; }
+.str, .atv { color: #68ACD7; }
+.kwd, .prettyprint .tag { color: #E0A8FF; }
+.typ, .atn, .dec, .var { color: #BBA25D; }
+.pln { color: #AFD7FF; }
 
 .prettyprint {
   padding: 8px;
-  background-color: #f7f7f9;
+  background-color: #1C1C1C;
   border: 1px solid #e1e1e8;
+  font-family:"Lucida Console", Monaco, monospace;
+  font-size:16px;
 }
 .prettyprint.linenums {
   -webkit-box-shadow: inset 40px 0 0 #fbfbfc, inset 41px 0 0 #ececf0;
@@ -26,5 +28,5 @@ ol.linenums li {
   padding-left: 12px;
   color: #bebec5;
   line-height: 20px;
-  text-shadow: 0 1px 0 #fff;
+  /*text-shadow: 0 1px 0 #fff;*/
 }
