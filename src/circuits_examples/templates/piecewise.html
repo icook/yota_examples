@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    {{ form|safe }}
+    <h3>The form definition</h3>
+    <pre class="prettyprint linenums languague-python">class JsonForm(Form):
+        # must be in place to tell our form we're doing piecewise. Activates
+        # certain things in the rendering proccess
+        g_context = {'piecewise': True, 'ajax': True}
+
+        # Set a simple title for the form
+        title = 'User signup <small>(not really)</small>'
+
+        first = EntryNode(title="First Name", validators=MaxLengthValidator(32))
+        last = EntryNode(title="Last Name", validators=MaxLengthValidator(32))
+        password = PasswordNode(title='Password*',
+                                validators=MinMaxValidator(5,32))
+        password_confirm = PasswordNode(title='Password Confirm*',
+                                    validators=MinMaxValidator(5,32))
+        # Setup a password validator that requires two matching fields
+        _passwords_match = Check(MatchingValidator(),
+                                'password',
+                                'password_confirm')
+        email = EntryNode(validators=EmailValidator(), title='Email*')
+        address = EntryNode()
+        state = ListNode(items=vals.states)
+        zip = EntryNode(title="Zipcode*",
+                        validators=[IntegerValidator(),
+                                MinMaxValidator(5, 5)])
+        terms = CheckGroupNode(
+            boxes=[('news', 'Recieve our newsletter?'),
+                ('dont_agree', 'Something else you don\'t want to check?'),
+                ('agree', '<b>Agree to our terms of service?*</b>')])
+
+        submit = SubmitNode(title="Submit")
+
+        # When all validator pass this data will be used in our render_success
+        # javascript callback. More information on how this works in the AJAX
+        # documentation
+        def success_header_generate(self):
+            return {'message': 'Thanks for your submission!'}</pre>
+</pre>
+    <h3>Our view function<small>(in circuits.web)</small></h3>
+    <pre class="prettyprint linenums languague-python">def piecewise(self, *args, **kwargs):
+    # Generate a regular form via a classmethod to provide easy access to extra
+    # functionality
+    form = JsonForm()
+
+    # Handle regular submission of the form
+    if self.request.method == 'POST':
+        success, out = form.json_validate(kwargs, piecewise=True)
+        if success:
+            print "Whoo! We should do some sort of database stuff here..."
+
+        return out
+    else:
+        out = form.render()
+
+    return render_template('piecewise.html', form=out)</pre>
+</div>
+</div>
+{% endblock %}
