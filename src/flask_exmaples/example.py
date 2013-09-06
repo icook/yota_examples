@@ -5,9 +5,13 @@ from yota.validators import *
 from yota.renderers import JinjaRenderer
 import os
 import vals
-from flask import Flask, request
-from flask import render_template, send_from_directory
+import pickle
+from flask import Flask, request, render_template, send_from_directory, abort, session, send_file
+from pysistor import Pysistor
+from StringIO import StringIO
 app = Flask(__name__)
+pysistor.Pysistor.from_dict(backend="pysistor.backends.FlaskSessionBackend",
+                            set_default=True)
 
 # Patch out jinjarenderer to include templates that are local. This is the
 # standard implementation for modifying search path to include templates
@@ -110,6 +114,15 @@ class DynamicForm(Form):
     def success_header_generate(self):
         return {'message': 'Thanks for your submission!'}
 
+@app.route("/captcha/<tident>", methods=['GET', 'POST'])
+def captcha_image(tident=None):
+    # Fetch the test object from pysistor
+    test = pickle.loads(Pysistor[None].get("captcha_{0}".format(tident)))
+    sfile = StringIO()
+    test.render().save(sfile, 'JPEG', quality=70)
+    sfile.seek(0)
+    return send_file(sfile, mimetype='image/jpeg')
+
 @app.route("/basic", methods=['GET', 'POST'])
 def basic():
     # Create an instance of our Form class
@@ -149,6 +162,9 @@ class BasicForm(Form):
     # Make a dropdown that lists all the states. Pull in the data from another
     # file for cleanlyness
     state = ListNode(items=vals.states)
+    # Captcha node to detect robot people
+    captch = CaptchaNode(validators=CaptchaValidator())
+
     submit = SubmitNode(title="Submit")
 
     def success_header_generate(self):
@@ -216,7 +232,8 @@ def piecewise():
     return render_template('piecewise.html',
                             form=out)
 
-
+# set the secret key.  keep this really secret:
+app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 
 if __name__ == "__main__":
     app.debug = True
