@@ -1,0 +1,32 @@
+.com { color: #C7C86F; }
+.lit { color: #195f91; }
+.pun, .opn, .clo { color: #93a1a1; }
+.fun { color: #dc322f; }
+.str, .atv { color: #68ACD7; }
+.kwd, .prettyprint .tag { color: #E0A8FF; }
+.typ, .atn, .dec, .var { color: #BBA25D; }
+.pln { color: #AFD7FF; }
+
+.prettyprint {
+  padding: 8px;
+  background-color: #1C1C1C;
+  border: 1px solid #e1e1e8;
+  font-family:"Lucida Console", Monaco, monospace;
+  font-size:16px;
+}
+.prettyprint.linenums {
+  -webkit-box-shadow: inset 40px 0 0 #fbfbfc, inset 41px 0 0 #ececf0;
+     -moz-box-shadow: inset 40px 0 0 #fbfbfc, inset 41px 0 0 #ececf0;
+          box-shadow: inset 40px 0 0 #fbfbfc, inset 41px 0 0 #ececf0;
+}
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums {
+  margin: 0 0 0 33px; /* IE indents via margin-left */
+}
+ol.linenums li {
+  padding-left: 12px;
+  color: #bebec5;
+  line-height: 20px;
+  /*text-shadow: 0 1px 0 #fff;*/
+}
