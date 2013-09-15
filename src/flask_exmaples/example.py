@@ -147,6 +147,7 @@ def basic():
     return render_template('basic.html',
                             form=out)
 
+
 class BasicForm(Form):
     # Triggers a simple h2 header
     title = "Basic Form"
@@ -164,11 +165,14 @@ class BasicForm(Form):
     state = ListNode(items=vals.states)
     # Captcha node to detect robot people
     captch = CaptchaNode(validators=CaptchaValidator())
+    captch_remove = Listener(
+        "validate_success", captcha_success_trigger, "captch")
 
     submit = SubmitNode(title="Submit")
 
     def success_header_generate(self):
         self.start.add_error({'message': 'Thanks for your submission!'})
+
 
 @app.route("/", methods=['GET', 'POST'])
 def home():
