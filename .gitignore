@@ -38,4 +38,5 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevprojecto
+.ropeproject
 .idea

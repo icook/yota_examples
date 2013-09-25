@@ -13,6 +13,12 @@ app = Flask(__name__)
 # standard implementation for modifying search path to include templates
 JinjaRenderer.search_path.insert(0, os.path.dirname(os.path.realpath(__file__)) +
 "/templates/yota/")
+JinjaRenderer.templ_type = 'bs3'
+Form.type_class_map = {'error': 'alert alert-danger',
+                      'info': 'alert alert-info',
+                      'success': 'alert alert-success',
+                      'warn': 'alert alert-warn'}
+
 
 @app.route('/yota_static/<path:filename>')
 def custom_static(filename):
@@ -146,6 +152,9 @@ class BasicForm(Form):
     last = EntryNode(title="Last Name", validators=MinLengthValidator(5))
     # Now add a different type of validator. Simply requires your submission to not be nothing
     address = EntryNode(validators=RequiredValidator())
+    tos = CheckNode(title="Terms of Service",
+                    description="Do you agree to the terms and conditions?",
+                    validators=RequiredValidator())
     # Make a dropdown that lists all the states. Pull in the data from another
     # file for cleanlyness
     state = ListNode(items=vals.states)
@@ -220,4 +229,4 @@ def piecewise():
 
 if __name__ == "__main__":
     app.debug = True
-    app.run()
+    app.run(host='0.0.0.0')

@@ -1,30 +1,30 @@
 {% extends "base.html" %}
-
+{%block title%}Basic Form{%endblock%}
 {% block content %}
-<div class="container">
+<br>
 {{ form|safe }}
-    <h3>The form definition</h3>
-    <pre class="prettyprint linenums languague-python">class BasicForm(Form):
-    # Triggers a simple h2 header
-    title = "Basic Form"
+<h3>The form definition</h3>
+<pre class="prettyprint linenums languague-python">class BasicForm(Form):
+# Triggers a simple h2 header
+title = "Basic Form"
 
-    # Override the default title which would be "First" to "First Name"
-    first = EntryNode(title="First Name")
-    # And add a validator to it explicitly. The name of the attribute is not important
-    _last_valid = Check(MinLengthValidator(5), 'first')
-    # Like above, but now add a simple shorthand for a min length validator
-    last = EntryNode(title="Last Name", validators=MinLengthValidator(5))
-    # Now add a different type of validator. Simply requires your submission to not be nothing
-    address = EntryNode(validators=RequiredValidator())
-    # Make a dropdown that lists all the states. Pull in the data from another
-    # file for cleanlyness
-    state = ListNode(items=vals.states)
-    submit = SubmitNode(title="Submit")
+# Override the default title which would be "First" to "First Name"
+first = EntryNode(title="First Name")
+# And add a validator to it explicitly. The name of the attribute is not important
+_last_valid = Check(MinLengthValidator(5), 'first')
+# Like above, but now add a simple shorthand for a min length validator
+last = EntryNode(title="Last Name", validators=MinLengthValidator(5))
+# Now add a different type of validator. Simply requires your submission to not be nothing
+address = EntryNode(validators=RequiredValidator())
+# Make a dropdown that lists all the states. Pull in the data from another
+# file for cleanlyness
+state = ListNode(items=vals.states)
+submit = SubmitNode(title="Submit")
 
-    def success_header_generate(self):
-        self.start.add_error({'message': 'Thanks for your submission!'})</pre>
-    <h3>Our view function<small>(in Flask)</small></h3>
-    <pre class="prettyprint linenums languague-python">@app.route("/basic", methods=['GET', 'POST'])
+def success_header_generate(self):
+    self.start.add_error({'message': 'Thanks for your submission!'})</pre>
+<h3>Our view function<small>(in Flask)</small></h3>
+<pre class="prettyprint linenums languague-python">@app.route("/basic", methods=['GET', 'POST'])
 def basic():
     # Create an instance of our Form class
     form = BasicForm()
@@ -47,6 +47,4 @@ def basic():
 
     return render_template('basic.html',
                             form=out)</pre>
-</div>
-</div>
 {% endblock %}

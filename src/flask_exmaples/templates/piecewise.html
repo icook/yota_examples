@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{%block title%}Piecewise Form{%endblock%}
 
 {% block content %}
-<div class="container">
-    {{ form|safe }}
-    <h3>The form definition</h3>
-    <pre class="prettyprint linenums languague-python">class JsonForm(Form):
+<br>
+{{ form|safe }}
+<h3>The form definition</h3>
+<pre class="prettyprint linenums languague-python">class JsonForm(Form):
         # must be in place to tell our form we're doing piecewise. Activates
         # certain things in the rendering proccess
         g_context = {'piecewise': True, 'ajax': True}
@@ -41,8 +42,8 @@
         def success_header_generate(self):
             return {'message': 'Thanks for your submission!'}</pre>
 </pre>
-    <h3>Our view function<small>(in Flask)</small></h3>
-    <pre class="prettyprint linenums languague-python">@app.route("/piecewise", methods=['GET', 'POST'])
+<h3>Our view function<small>(in Flask)</small></h3>
+<pre class="prettyprint linenums languague-python">@app.route("/piecewise", methods=['GET', 'POST'])
 def piecewise():
     # Generate a regular form via a classmethod to provide easy access to extra
     # functionality
@@ -60,6 +61,4 @@ def piecewise():
 
     return render_template('piecewise.html',
                             form=out)</pre>
-</div>
-</div>
 {% endblock %}
