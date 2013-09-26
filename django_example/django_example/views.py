@@ -16,7 +16,7 @@ def main_index(request):
 
 # Build a simple form for adding polls
 class AddPoll(yota.Form):
-    title = EntryNode(title="Question", validators=[MinLengthValidator(5),
+    poll_title = EntryNode(title="Question", validators=[MinLengthValidator(5),
                                                    MaxLengthValidator(200)])
     submit = SubmitNode(title="Add")
 
@@ -72,7 +72,7 @@ def add_poll(request):
         success, output = form.validate_render(request.POST)
         if success:
             # add our new poll question
-            poll = Poll(question=request.POST['title'],
+            poll = Poll(question=request.POST['poll_title'],
                         pub_date = datetime.date.today())
             poll.save()
             return redirect('/')

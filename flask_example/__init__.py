@@ -1,18 +1,24 @@
+from flask import Flask, request
+import os
+from yota.renderers import JinjaRenderer
 from yota.nodes import *
-import yota
 from yota import Form
 from yota.validators import *
-from yota.renderers import JinjaRenderer
-import os
-import vals
+import yota
 from flask import Flask, request
 from flask import render_template, send_from_directory
+from flask_example import vals
+
+import os
+
 app = Flask(__name__)
 
 # Patch out jinjarenderer to include templates that are local. This is the
 # standard implementation for modifying search path to include templates
 JinjaRenderer.search_path.insert(0, os.path.dirname(os.path.realpath(__file__)) +
 "/templates/yota/")
+# set our renderer to use bootstrap3 instead of two, and patch the error render
+# mappings
 JinjaRenderer.templ_type = 'bs3'
 Form.type_class_map = {'error': 'alert alert-danger',
                       'info': 'alert alert-info',
@@ -224,7 +230,6 @@ def piecewise():
 
     return render_template('piecewise.html',
                             form=out)
-
 
 
 if __name__ == "__main__":

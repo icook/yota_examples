@@ -13,13 +13,21 @@ from circuits.web import Controller, Server, Static
 
 import vals
 
+template_path = os.path.dirname(os.path.realpath(__file__)) + "/templates/"
+# set our renderer to use bootstrap3 instead of two, and patch the error render
+# mappings
+JinjaRenderer.templ_type = 'bs3'
+Form.type_class_map = {'error': 'alert alert-danger',
+                      'info': 'alert alert-info',
+                      'success': 'alert alert-success',
+                      'warn': 'alert alert-warn'}
 # Patch out jinjarenderer to include templates that are local. This is the
 # standard implementation for modifying search path to include templates
 JinjaRenderer.search_path.insert(
-    0, os.path.join(os.path.dirname(os.path.realpath(__file__)), "templates/yota/")
+    0, os.path.join(template_path, "/yota/")
 )
 
-env = Environment(loader=FileSystemLoader("templates"))
+env = Environment(loader=FileSystemLoader(template_path))
 
 
 def render_template(name, **ctx):
@@ -230,12 +238,12 @@ class Root(Controller):
 
         return render_template('piecewise.html', form=out)
 
-app = Server(("0.0.0.0", 9000))
+app = Server(("0.0.0.0", 5000))
 
 from circuits import Debugger
 Debugger().register(app)
 
-Static().register(app)
+Static(docroot=template_path + "../").register(app)
 Root().register(app)
 
 app.run()

@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{%block title%}Piecewise Form{%endblock%}
 
 {% block content %}
-<div class="container">
-    {{ form|safe }}
-    <h3>The form definition</h3>
-    <pre class="prettyprint linenums languague-python">class JsonForm(Form):
+<br>
+{{ form|safe }}
+<h3>The form definition</h3>
+<pre class="prettyprint linenums languague-python">class JsonForm(Form):
         # must be in place to tell our form we're doing piecewise. Activates
         # certain things in the rendering proccess
         g_context = {'piecewise': True, 'ajax': True}
@@ -41,15 +42,16 @@
         def success_header_generate(self):
             return {'message': 'Thanks for your submission!'}</pre>
 </pre>
-    <h3>Our view function<small>(in circuits.web)</small></h3>
-    <pre class="prettyprint linenums languague-python">def piecewise(self, *args, **kwargs):
+<h3>Our view function<small>(in Flask)</small></h3>
+<pre class="prettyprint linenums languague-python">@app.route("/piecewise", methods=['GET', 'POST'])
+def piecewise():
     # Generate a regular form via a classmethod to provide easy access to extra
     # functionality
     form = JsonForm()
 
     # Handle regular submission of the form
-    if self.request.method == 'POST':
-        success, out = form.json_validate(kwargs, piecewise=True)
+    if request.method == 'POST':
+        success, out = form.json_validate(request.form, piecewise=True)
         if success:
             print "Whoo! We should do some sort of database stuff here..."
 
@@ -57,7 +59,6 @@
     else:
         out = form.render()
 
-    return render_template('piecewise.html', form=out)</pre>
-</div>
-</div>
+    return render_template('piecewise.html',
+                            form=out)</pre>
 {% endblock %}

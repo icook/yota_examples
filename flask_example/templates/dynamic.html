@@ -1,10 +1,11 @@
 {% extends "base.html" %}
+{%block title%}Dynamic Form{%endblock%}
 
 {% block content %}
-<div class="container">
-    {{ form|safe }}
-    <h3>The form definition</h3>
-    <pre class="prettyprint linenums languague-python">class DynamicForm(Form):
+<br>
+{{ form|safe }}
+<h3>The form definition</h3>
+<pre class="prettyprint linenums languague-python">class DynamicForm(Form):
     # simple header trigger for the template
     title = "Dynamic Form"
     g_context={'ajax': True}
@@ -70,27 +71,27 @@
 
     def success_header_generate(self):
         return {'message': 'Thanks for your submission!'}</pre>
-    <h3>Our view function<small>(in circuits.web)</small></h3>
-    <pre class="prettyprint linenums languague-python">def dynamic(self, *args, **kwargs):
+<h3>Our view function<small>(in Flask)</small></h3>
+<pre class="prettyprint linenums languague-python">@app.route("/dynamic", methods=['GET', 'POST'])
+def dynamic():
+
     # Handle submission of the form
-    if self.request.method == 'POST':
+    if request.method == 'POST':
         # This may be a bit confusing. Essentially we're using the data
         # submitted with the request to build our object representation of the
         # form. This is the magic of dynamic forms that allows them to match a
         # changing form based on parameters
-        form = DynamicForm.get_form_from_data(kwargs)
+        form = DynamicForm.get_form_from_data(request.form)
         # Then we validate the form just like the old AJAX form
-        success, output = form.json_validate(kwargs)
+        success, output = form.json_validate(request.form)
         if success:
-            print (
-                "Yay! Successfully validated. Some other actions should be "
-                " taken here..."
-            )
+            print ("Yay! Successfully validated. Some other actions should be "
+                  " taken here...")
         return output
 
     # Generate the form as default if there's no submission
     form_out = DynamicForm.get_form().render()
 
-    return render_template('dynamic.html', form=form_out)</pre>
-</div>
+    return render_template('dynamic.html',
+                            form=form_out)</pre>
 {% endblock %}
