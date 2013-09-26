@@ -1,6 +1,8 @@
 [Yota](http://github.com/icook/yota) Examples
 =============================================
 
+[View the flask version live](http://yota.ibcook.com/)
+
 Examples for the Yota form library. A simple demonstration using Flask and Django, showcasing several of the key features of Yota.
 
 Install and Setup
